@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>龙泽园街道阳光政务</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/Chart.js/3.9.1/chart.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+        body { background-color: #f5f9ff; color: #2d3748; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+        
+        /* 新版头部设计 */
+        .header { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            height: 70px; 
+            background: linear-gradient(135deg, #1a56db 0%, #1e429f 100%); 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 100; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .header h1 { 
+            font-size: 22px; 
+            font-weight: 600; 
+            letter-spacing: 1px; 
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header-logo {
+            position: absolute;
+            left: 20px;
+            height: 36px;
+        }
+        
+        /* 容器样式 */
+        .container { 
+            padding: 86px 18px 88px; 
+            min-height: 100vh; 
+            background-color: #f5f9ff;
+        }
+        
+        /* 底部导航栏美化 */
+        .tab-bar { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            height: 80px; 
+            background-color: white; 
+            display: flex; 
+            border-top: 1px solid #e6edff; 
+            z-index: 100; 
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+            padding: 0 10px;
+        }
+        .tab-item { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            color: #718096; 
+            font-size: 12px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border-radius: 12px;
+            margin: 0 5px;
+        }
+        .tab-item.active { 
+            color: #1a56db; 
+            transform: translateY(-8px); 
+        }
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            width: 30px;
+            height: 3px;
+            background: #1a56db;
+            border-radius: 3px;
+        }
+        .tab-icon { 
+            font-size: 24px; 
+            margin-bottom: 5px; 
+            transition: all 0.3s ease; 
+        }
+        .tab-item.active .tab-icon { 
+            transform: scale(1.15); 
+            filter: drop-shadow(0 2px 4px rgba(26, 86, 219, 0.2));
+        }
+        
+        /* 子导航美化 */
+        .sub-nav { 
+            display: flex; 
+            background: white; 
+            padding: 12px 16px; 
+            margin-bottom: 20px; 
+            border-radius: 14px; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); 
+            position: sticky; 
+            top: 70px; 
+            z-index: 90;
+            border: 1px solid #e6edff;
+        }
+        .sub-tab { 
+            flex: 1; 
+            text-align: center; 
+            padding: 10px 0; 
+            font-size: 14px; 
+            color: #718096; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+        .sub-tab.active { 
+            color: #1a56db; 
+            border-bottom-color: #1a56db;
+            font-weight: 600;
+        }
+        .sub-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #1a56db;
+            border-radius: 50%;
+        }
+        
+        /* 卡片设计升级 */
+        .card { 
+            background-color: white; 
+            border-radius: 16px; 
+            padding: 22px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-left: 5px solid #1a56db;
+            border: 1px solid #e6edff;
+            overflow: hidden;
+            position: relative;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #1a56db 0%, #3f83f8 100%);
+        }
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); 
+        }
+        .card-title { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-bottom: 15px; 
+            color: #1e429f; 
+            display: flex; 
+            align-items: center; 
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e6edff;
+        }
+        .card-title i { 
+            margin-right: 10px; 
+            color: #3f83f8; 
+            font-size: 20px;
+        }
+        .card-content { 
+            font-size: 15px; 
+            color: #4a5568; 
+            line-height: 1.8; 
+            margin-bottom: 15px; 
+        }
+        .card-date { 
+            font-size: 13px; 
+            color: #a0aec0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-end; 
+            font-style: italic;
+        }
+        .card-date i { 
+            margin-right: 6px; 
+        }
+        
+        /* 数据表格美化 */
+        .data-table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0;
+            margin: 20px 0; 
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .data-table th, 
+        .data-table td { 
+            padding: 14px 16px; 
+            text-align: left; 
+            border-bottom: 1px solid #e6edff; 
+        }
+        .data-table th { 
+            background-color: #f0f5ff; 
+            color: #1e429f; 
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        .data-table tr:hover td { 
+            background-color: #f8fbff; 
+        }
+        
+        /* 图表容器美化 */
+        .chart-container { 
+            position: relative; 
+            height: 260px; 
+            width: 100%; 
+            margin: 20px 0; 
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e6edff;
+        }
+        
+        /* 模态框美化 */
+        .modal { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-color: rgba(0, 0, 0, 0.6); 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 200; 
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
+            backdrop-filter: blur(5px);
+        }
+        .modal.show { 
+            opacity: 1; 
+            display: flex; 
+        }
+        .modal-content { 
+            background-color: white; 
+            width: 90%; 
+            max-width: 500px; 
+            border-radius: 20px; 
+            padding: 25px; 
+            max-height: 80vh; 
+            overflow-y: auto; 
+            transform: translateY(30px) scale(0.95); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); 
+            border: 1px solid #e6edff;
+        }
+        .modal.show .modal-content { 
+            transform: translateY(0) scale(1); 
+        }
+        .modal-title { 
+            font-size: 22px; 
+            font-weight: 600; 
+            margin-bottom: 20px; 
+            color: #1e429f; 
+            display: flex; 
+            align-items: center; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e6edff;
+        }
+        .modal-title i { 
+            margin-right: 12px; 
+            color: #3f83f8;
+            font-size: 24px;
+        }
+        .modal-close { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            font-size: 26px; 
+            color: #a0aec0; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f0f5ff;
+        }
+        .modal-close:hover { 
+            color: #1e429f; 
+            transform: rotate(90deg); 
+            background: #e6edff;
+        }
+        
+        /* 表单美化 */
+        .form-group { 
+            margin-bottom: 22px; 
+        }
+        .form-label { 
+            display: block; 
+            margin-bottom: 10px; 
+            font-size: 15px; 
+            color: #4a5568; 
+            font-weight: 500; 
+            display: flex;
+            align-items: center;
+        }
+        .form-label i {
+            margin-right: 8px;
+            color: #3f83f8;
+            font-size: 16px;
+        }
+        .form-input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 1px solid #e6edff; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            transition: all 0.3s ease; 
+            background-color: #f8fbff; 
+        }
+        .form-input:focus { 
+            outline: none; 
+            border-color: #3f83f8; 
+            box-shadow: 0 0 0 3px rgba(63, 131, 248, 0.15); 
+        }
+        .form-textarea { 
+            height: 160px; 
+            resize: none; 
+        }
+        .form-select { 
+            appearance: none; 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
+            background-repeat: no-repeat; 
+            background-position: right 12px center; 
+            background-size: 16px; 
+        }
+        
+        /* 按钮美化 */
+        .btn { 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 24px; 
+            background: linear-gradient(135deg, #1a56db 0%, #3f83f8 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            text-align: center; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 4px 12px rgba(26, 86, 219, 0.2); 
+        }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 16px rgba(26, 86, 219, 0.3); 
+        }
+        .btn:active { 
+            transform: translateY(0); 
+        }
+        .btn i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        .btn-block { 
+            display: flex; 
+            width: 100%; 
+        }
+        .btn-outline { 
+            background: transparent; 
+            border: 1px solid #3f83f8; 
+            color: #3f83f8; 
+            box-shadow: none;
+        }
+        .btn-outline:hover { 
+            background: rgba(63, 131, 248, 0.1); 
+        }
+        
+        /* 联系样式 */
+        .contact-link { 
+            color: #3f83f8; 
+            text-decoration: none; 
+            font-weight: 500; 
+            transition: all 0.3s ease; 
+            display: inline-flex; 
+            align-items: center; 
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f0f5ff;
+        }
+        .contact-link:hover { 
+            color: #1a56db; 
+            text-decoration: none; 
+            background: #e6edff;
+        }
+        .contact-link i { 
+            margin-right: 8px; 
+            font-size: 16px;
+        }
+        
+        /* 空状态提示 */
+        .empty-tip { 
+            text-align: center; 
+            color: #a0aec0; 
+            padding: 80px 0; 
+            font-size: 15px; 
+        }
+        .empty-tip i { 
+            font-size: 56px; 
+            margin-bottom: 20px; 
+            color: #e6edff; 
+            opacity: 0.7;
+        }
+        
+        /* 时间轴美化 */
+        .timeline { 
+            position: relative; 
+            padding-left: 30px; 
+        }
+        .timeline::before { 
+            content: ''; 
+            position: absolute; 
+            left: 15px; 
+            top: 0; 
+            bottom: 0; 
+            width: 2px; 
+            background: linear-gradient(to bottom, #3f83f8, #a4cafe); 
+        }
+        .timeline-item { 
+            position: relative; 
+            padding-bottom: 28px; 
+        }
+        .timeline-item:last-child { 
+            padding-bottom: 0; 
+        }
+        .timeline-dot { 
+            position: absolute; 
+            left: -30px; 
+            top: 5px; 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%; 
+            background-color: #3f83f8; 
+            border: 4px solid white; 
+            box-shadow: 0 0 0 2px #3f83f8; 
+        }
+        .timeline-date { 
+            font-size: 14px; 
+            color: #718096; 
+            margin-bottom: 6px; 
+            font-weight: 500;
+        }
+        .timeline-content { 
+            background-color: white; 
+            padding: 16px; 
+            border-radius: 12px; 
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); 
+            border: 1px solid #e6edff;
+        }
+        .timeline-content strong {
+            color: #1e429f;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        /* 星级评分 */
+        .star-rating { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .star { 
+            font-size: 28px; 
+            color: #e2e8f0; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            margin: 0 5px;
+        }
+        .star.active { 
+            color: #f6ad55; 
+            text-shadow: 0 2px 4px rgba(246, 173, 85, 0.3);
+        }
+        
+        /* 文件上传样式 */
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        .file-upload-btn {
+            border: 1px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background-color: #f8fbff;
+            color: #718096;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .file-upload-btn:hover {
+            border-color: #3f83f8;
+            background-color: #f0f5ff;
+        }
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 400px) {
+            .header h1 { font-size: 20px; }
+            .card { padding: 18px; }
+            .modal-content { padding: 20px; }
+            .sub-nav { padding: 10px 12px; }
+            .sub-tab { font-size: 13px; }
+            .tab-icon { font-size: 22px; }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyLDJBMTAsMTAgMCAwLDAgMiwxMkExMCwxMCAwIDAsMCAxMiwyMkExMCwxMCAwIDAsMCAyMiwxMkExMCwxMCAwIDAsMCAxMiwyTTEyLDNBOSw5IDAgMCwxIDIxLDEyQTksOSAwIDAsMSAxMiwyMUE5LDkgMCAwLDEgMywxMkE5LDkgMCAwLDEgMTIsM00xMSw3VjE3SDEzVjdIMTFNMTUsMTVWN0gxM1YxNUgxNVoiIGZpbGw9IndoaXRlIi8+PC9zdmc+" alt="政务" class="header-logo">
+        <h1>龙泽园街道阳光政务</h1>
+    </div>
+
+    <div class="container">
+        <!-- 三资公开页面 -->
+        <div id="assets-page" class="fade-in">
+            <div class="sub-nav fade-in">
+                <div class="sub-tab active" onclick="switchSubTab('assets', 'fund')">集体资金</div>
+                <div class="sub-tab" onclick="switchSubTab('assets', 'property')">集体资产</div>
+                <div class="sub-tab" onclick="switchSubTab('assets', 'resource')">集体资源</div>
+            </div>
+            
+            <!-- 集体资金子页面 -->
+            <div id="fund-page" class="fade-in delay-1">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-money-bill-wave"></i> 年度收支明细</div>
+                    <div class="chart-container">
+                        <canvas id="fundChart"></canvas>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>金额(万元)</th>
+                                <th>占比</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>集体经济收入</td>
+                                <td>1,250</td>
+                                <td>42%</td>
+                            </tr>
+                            <tr>
+                                <td>财政拨款</td>
+                                <td>980</td>
+                                <td>33%</td>
+                            </tr>
+                            <tr>
+                                <td>其他收入</td>
+                                <td>750</td>
+                                <td>25%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card fade-in delay-2">
+                    <div class="card-title"><i class="fas fa-hand-holding-usd"></i> 专项资金使用</div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2023年10月</div>
+                            <div class="timeline-content">
+                                <strong>老旧小区改造专项</strong>
+                                <p>使用资金：120万元，完成外墙保温工程3栋</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2023年9月</div>
+                            <div class="timeline-content">
+                                <strong>社区环境整治专项</strong>
+                                <p>使用资金：80万元，清理垃圾30吨，拆除违建5处</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 集体资产子页面 -->
+            <div id="property-page" style="display: none;">
+                <div class="card fade-in">
+                    <div class="card-title"><i class="fas fa-building"></i> 资产清单</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>资产名称</th>
+                                <th>数量</th>
+                                <th>使用状态</th>
+                                <th>维护记录</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>社区服务中心</td>
+                                <td>1栋</td>
+                                <td><span style="color:#38a169;">正常使用</span></td>
+                                <td>2023年8月检修</td>
+                            </tr>
+                            <tr>
+                                <td>文化活动室</td>
+                                <td>3间</td>
+                                <td><span style="color:#38a169;">正常使用</span></td>
+                                <td>2023年9月维护</td>
+                            </tr>
+                            <tr>
+                                <td>健身器材</td>
+                                <td>25套</td>
+                                <td><span style="color:#dd6b20;">部分维修</span></td>
+                                <td>2023年10月报修</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card fade-in delay-1">
+                    <div class="card-title"><i class="fas fa-map-marked-alt"></i> 资源分布图</div>
+                    <div class="chart-container">
+                        <canvas id="propertyMap"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 集体资源子页面 -->
+            <div id="resource-page" style="display: none;">
+                <div class="card fade-in">
+                    <div class="card-title"><i class="fas fa-tree"></i> 自然资源台账</div>
+                    <div class="card-content">
+                        <p><i class="fas fa-square" style="color: #48bb78;"></i> 社区绿地面积：15,000平方米</p>
+                        <p><i class="fas fa-square" style="color: #4299e1;"></i> 公共水域面积：2,500平方米</p>
+                        <p><i class="fas fa-square" style="color: #9f7aea;"></i> 公共设施用地：8,000平方米</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="resourceChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card fade-in delay-1">
+                    <div class="card-title"><i class="fas fa-file-contract"></i> 承包经营情况</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>资源类型</th>
+                                <th>承包方</th>
+                                <th>合同期限</th>
+                                <th>年收益(万元)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>社区商铺</td>
+                                <td>XX商贸公司</td>
+                                <td>2022-2025</td>
+                                <td>120</td>
+                            </tr>
+                            <tr>
+                                <td>停车场</td>
+                                <td>XX物业公司</td>
+                                <td>2021-2024</td>
+                                <td>80</td>
+                            </tr>
+                            <tr>
+                                <td>便民市场</td>
+                                <td>XX农贸市场</td>
+                                <td>2023-2026</td>
+                                <td>150</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 工作公开页面 -->
+        <div id="work-page" style="display: none;">
+            <div class="sub-nav">
+                <div class="sub-tab active" onclick="switchSubTab('work', 'major')">重点工作</div>
+                <div class="sub-tab" onclick="switchSubTab('work', 'routine')">常规工作</div>
+                <div class="sub-tab" onclick="switchSubTab('work', 'policy')">政策传达</div>
+            </div>
+            
+            <!-- 重点工作子页面 -->
+            <div id="major-page" class="fade-in delay-1">
+                <div class="card" onclick="showDetail('老旧小区改造项目', '已完成3栋楼的外墙保温工程，正在进行楼道粉刷和门窗更换，预计12月底前全部完工。', '2023-10-15')">
+                    <div class="card-title"><i class="fas fa-hard-hat"></i> 老旧小区改造项目</div>
+                    <div class="card-content">
+                        <p>已完成3栋楼的外墙保温工程，正在进行楼道粉刷和门窗更换...</p>
+                    </div>
+                    <div class="card-date"><i class="far fa-calendar-alt"></i> 2023-10-15</div>
+                </div>
+                
+                <div class="card fade-in delay-2" onclick="showDetail('社区环境整治', '清理垃圾30吨，拆除违建5处，新增绿化面积500平方米。', '2023-09-28')">
+                    <div class="card-title"><i class="fas fa-trash-restore"></i> 社区环境整治</div>
+                    <div class="card-content">
+                        <p>清理垃圾30吨，拆除违建5处，新增绿化面积500平方米...</p>
+                    </div>
+                    <div class="card-date"><i class="far fa-calendar-alt"></i> 2023-09-28</div>
+                </div>
+            </div>
+            
+            <!-- 常规工作子页面 -->
+            <div id="routine-page" style="display: none;">
+                <div class="card fade-in">
+                    <div class="card-title"><i class="fas fa-chart-line"></i> 月度工作报表</div>
+                    <div class="chart-container">
+                        <canvas id="workChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card fade-in delay-1">
+                    <div class="card-title"><i class="fas fa-calendar-check"></i> 社区活动记录</div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2023-10-10</div>
+                            <div class="timeline-content">
+                                <strong>重阳节敬老活动</strong>
+                                <p>组织社区60岁以上老人200余人参加敬老茶话会</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">2023-09-15</div>
+                            <div class="timeline-content">
+                                <strong>消防安全演练</strong>
+                                <p>联合消防大队开展消防演练，参与居民500余人</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 政策传达子页面 -->
+            <div id="policy-page" style="display: none;">
+                <div class="card fade-in">
+                    <div class="card-title"><i class="fas fa-file-alt"></i> 最新惠民政策</div>
+                    <div class="card-content">
+                        <h4>冬季取暖补贴政策</h4>
+                        <p>即日起至11月30日，60岁以上独居老人可申请200元取暖补贴...</p>
+                    </div>
+                    <div class="card-date"><i class="far fa-calendar-alt"></i> 2023-10-20</div>
+                </div>
+                
+                <div class="card fade-in delay-1">
+                    <div class="card-title"><i class="fas fa-bullhorn"></i> 办事指南更新</div>
+                    <div class="card-content">
+                        <h4>生育登记办理流程简化</h4>
+                        <p>即日起，生育登记可全程网上办理，无需提交纸质材料...</p>
+                    </div>
+                    <div class="card-date"><i class="far fa-calendar-alt"></i> 2023-10-05</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 监督反馈页面 -->
+        <div id="feedback-page" style="display: none;">
+            <div class="sub-nav">
+                <div class="sub-tab active" onclick="switchSubTab('feedback', 'report')">问题上报</div>
+                <div class="sub-tab" onclick="switchSubTab('feedback', 'query')">办理查询</div>
+                <div class="sub-tab" onclick="switchSubTab('feedback', 'contact')">联系方式</div>
+            </div>
+            
+            <!-- 问题上报子页面 -->
+            <div id="report-page" class="fade-in delay-1">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-edit"></i> 监督意见反馈</div>
+                    <form id="feedback-form">
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-tag"></i> 问题类型</label>
+                            <select class="form-input form-select" required>
+                                <option value="">请选择问题类型</option>
+                                <option value="三资管理">三资管理</option>
+                                <option value="工作作风">工作作风</option>
+                                <option value="环境卫生">环境卫生</option>
+                                <option value="其他建议">其他建议</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-align-left"></i> 问题描述</label>
+                            <textarea class="form-input form-textarea" placeholder="请详细描述您发现的问题或建议..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-camera"></i> 上传图片(选填)</label>
+                            <div class="file-upload">
+                                <div class="file-upload-btn">
+                                    <i class="fas fa-cloud-upload-alt"></i><br>
+                                    点击上传图片证据(最多3张)
+                                </div>
+                                <input type="file" class="file-upload-input" accept="image/*" multiple>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> 匿名提交
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-block"><i class="fas fa-paper-plane"></i> 提交反馈</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 办理查询子页面 -->
+            <div id="query-page" style="display: none;">
+                <div class="card fade-in">
+                    <div class="card-title"><i class="fas fa-search"></i> 查询办理进度</div>
+                    <form id="query-form">
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-hashtag"></i> 查询编号</label>
+                            <input type="text" class="form-input" placeholder="请输入您的反馈编号" required>
+                        </div>
+                        <button type="submit" class="btn btn-block"><i class="fas fa-search"></i> 查询</button>
+                    </form>
+                </div>
+                
+                <div class="card fade-in delay-1" id="query-result" style="display: none;">
+                    <div class="card-title"><i class="fas fa-clipboard-check"></i> 处理进度</div>
+                    <div class="card-content">
+                        <p><strong>反馈编号：</strong>FB20231015001</p>
+                        <p><strong>问题类型：</strong>环境卫生</p>
+                        <p><strong>提交时间：</strong>2023-10-15 14:30</p>
+                        <p><strong>处理状态：</strong><span style="color:#3182ce;">处理中</span></p>
+                        <p><strong>最新进展：</strong>已安排工作人员现场核查</p>
+                    </div>
+                    <div class="star-rating">
+                        <div class="star" onclick="rate(1)">★</div>
+                        <div class="star" onclick="rate(2)">★</div>
+                        <div class="star" onclick="rate(3)">★</div>
+                        <div class="star" onclick="rate(4)">★</div>
+                        <div class="star" onclick="rate(5)">★</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 联系方式子页面 -->
+            <div id="contact-page" style="display: none;">
+                <div class="card fade-in">
+                    <div class="card-title"><i class="fas fa-phone-alt"></i> 监督联系方式</div>
+                    <div class="card-content">
+                        <p>欢迎通过以下方式联系我们：</p>
+                        <p><a href="tel:010-12345678" class="contact-link"><i class="fas fa-phone"></i> 监督电话：010-12345678</a></p>
+                        <p><a href="mailto:lzy@example.com" class="contact-link"><i class="fas fa-envelope"></i> 电子邮箱：lzy@example.com</a></p>
+                        <p><i class="fas fa-clock"></i> 工作时间：周一至周五 9:00-17:30</p>
+                    </div>
+                </div>
+                
+                <div class="card fade-in delay-1">
+                    <div class="card-title"><i class="fas fa-map-marker-alt"></i> 办公地址</div>
+                    <div class="card-content">
+                        <p><i class="fas fa-building"></i> 北京市昌平区龙泽园街道办事处</p>
+                        <p><i class="fas fa-subway"></i> 地铁13号线龙泽站A口出，步行500米</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="switchTab('assets')">
+            <i class="fas fa-landmark tab-icon"></i>
+            <span>三资公开</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('work')">
+            <i class="fas fa-clipboard-list tab-icon"></i>
+            <span>工作公开</span>
+        </div>
+        <div class="tab-item" onclick="switchTab('feedback')">
+            <i class="fas fa-comment-dots tab-icon"></i>
+            <span>监督反馈</span>
+        </div>
+    </div>
+    
+    <!-- 详情弹窗 -->
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('detail-modal')">×</div>
+            <div class="modal-title"><i class="fas fa-info-circle"></i> <span id="detail-title"></span></div>
+            <div id="detail-content"></div>
+            <div id="detail-date" class="card-date"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // 初始化图表
+        function initCharts() {
+            // 资金图表
+            const fundCtx = document.getElementById('fundChart').getContext('2d');
+            new Chart(fundCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['集体经济收入', '财政拨款', '其他收入'],
+                    datasets: [{
+                        data: [1250, 980, 750],
+                        backgroundColor: [
+                            'rgba(26, 86, 219, 0.8)',
+                            'rgba(63, 131, 248, 0.8)',
+                            'rgba(160, 174, 192, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}万元 (${context.parsed}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 资产地图图表
+            const propertyCtx = document.getElementById('propertyMap').getContext('2d');
+            new Chart(propertyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['社区服务中心', '文化活动室', '健身设施', '停车场', '便民市场'],
+                    datasets: [{
+                        label: '资产数量',
+                        data: [1, 3, 25, 2, 1],
+                        backgroundColor: 'rgba(63, 131, 248, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // 资源图表
+            const resourceCtx = document.getElementById('resourceChart').getContext('2d');
+            new Chart(resourceCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['绿地面积', '水域面积', '设施用地'],
+                    datasets: [{
+                        data: [15000, 2500, 8000],
+                        backgroundColor: [
+                            'rgba(72, 187, 120, 0.8)',
+                            'rgba(66, 153, 225, 0.8)',
+                            'rgba(159, 122, 234, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+            
+            // 工作图表
+            const workCtx = document.getElementById('workChart').getContext('2d');
+            new Chart(workCtx, {
+                type: 'line',
+                data: {
+                    labels: ['9月', '10月', '11月'],
+                    datasets: [
+                        {
+                            label: '重点工作',
+                            data: [85, 90, 65],
+                            borderColor: 'rgba(26, 86, 219, 0.8)',
+                            backgroundColor: 'rgba(26, 86, 219, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: '常规工作',
+                            data: [92, 88, 70],
+                            borderColor: 'rgba(72, 187, 120, 0.8)',
+                            backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 50,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 切换主标签页
+        function switchTab(tab) {
+            document.getElementById('assets-page').style.display = 'none';
+            document.getElementById('work-page').style.display = 'none';
+            document.getElementById('feedback-page').style.display = 'none';
+            
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.getElementById(`${tab}-page`).style.display = 'block';
+            event.currentTarget.classList.add('active');
+            
+            // 重置子标签页为第一个
+            const subTabs = document.querySelectorAll(`#${tab}-page .sub-nav .sub-tab`);
+            subTabs.forEach((tab, index) => {
+                tab.classList.remove('active');
+                if(index === 0) tab.classList.add('active');
+            });
+            
+            const subPages = document.querySelectorAll(`#${tab}-page > div[id$="-page"]`);
+            subPages.forEach((page, index) => {
+                page.style.display = index === 0 ? 'block' : 'none';
+            });
+        }
+        
+        // 切换子标签页
+        function switchSubTab(parent, tab) {
+            const parentPage = event.currentTarget.closest('.sub-nav').parentElement;
+            const subPages = parentPage.querySelectorAll(`div[id$="-page"]`);
+            
+            subPages.forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            document.querySelectorAll(`#${parent}-page .sub-nav .sub-tab`).forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.getElementById(`${tab}-page`).style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+        
+        // 显示详情弹窗
+        function showDetail(title, content, date) {
+            document.getElementById('detail-title').textContent = title;
+            document.getElementById('detail-content').innerHTML = content;
+            document.getElementById('detail-date').innerHTML = `<i class="far fa-calendar-alt"></i> ${date}`;
+            document.getElementById('detail-modal').classList.add('show');
+        }
+        
+        // 关闭弹窗
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+        
+        // 星级评分
+        function rate(rating) {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if(index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+        
+        // 表单提交
+        document.getElementById('feedback-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('感谢您的反馈，我们会尽快处理！');
+            this.reset();
+        });
+        
+        document.getElementById('query-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('query-result').style.display = 'block';
+        });
+        
+        // 初始化
+        window.onload = function() {
+            initCharts();
+        };
+    </script>
+</body>
+</html>
